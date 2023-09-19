@@ -1,8 +1,14 @@
-from pydeconz import DeconzSession
-import aiohttp
+from flask import Flask
+
+app = Flask(__name__)
+
+
 import asyncio
-import requests
 import json
+
+import aiohttp
+import requests
+from pydeconz import DeconzSession
 
 # Replace with the IP address and port of your ConBee stick
 host = "192.168.1.32"
@@ -29,7 +35,7 @@ body = json.dumps({
     "devicetype": "python_test",
 })
 
-response = requests.post(f"http://{internal_ip}:{internal_port}/api", json={"name": "PhosconGW"}, data=body)
+response = requests.post(f"http://{internal_ip}:{internal_port}/api", data=body)
 
 if response.status_code != 200:
     for error_msg in response.json():
@@ -47,55 +53,7 @@ username = response.json()[0]["success"]["username"]
 
 print(f"Received username: {username}")
 
-api_body = [
-    {
-        "id": "00212EFFFF070C7D",
-        "internalipaddress": "172.30.33.2",
-        "macaddress": "00212EFFFF070C7D",
-        "internalport": 40850,
-        "name": "PhosconGW",
-        "publicipaddress": "217.123.61.101"
-    }
-]
+@app.route("/")
+def index():
+    return 'Let\'s go!'
 
-
-# # Initialize a session
-# with aiohttp.ClientSession() as aiohttp_session:
-#     session = DeconzSession(aiohttp_session, host, port)
-#
-# # Connect to the ConBee stick
-# session.start()
-#
-# # Authenticate if needed (you may need to obtain an API key)
-# api_key = "your_api_key"  # Replace with your API key
-# session.register(api_key)
-#
-# # List the available sensors
-# sensors = session.sensors
-# print("Available Sensors:")
-# for sensor in sensors:
-#     print(sensor)
-
-
-# async def fetch_data():
-#     async with aiohttp.ClientSession() as aiohttp_session:
-#         session = DeconzSession(aiohttp_session, host, port)
-#         session.start(websocketport=websocket_port)
-#
-#         print("Session started ", session)
-#
-#         sensors = session.sensors
-#         print("Available Sensors:")
-#         for sensor in sensors:
-#             print(sensor)
-#
-#
-# async def main():
-#     data = await fetch_data()
-#     print(data)
-#
-#
-# if __name__ == "__main__":
-#     asyncio.run(main())
-
-# You can now interact with the sensors and devices connected to the ConBee stick

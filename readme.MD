@@ -7,3 +7,7 @@ This project will create overviews of the states of deconz devices.
 ### Sensors
 
 ### Switches
+
+
+temp password:
+deconzm
