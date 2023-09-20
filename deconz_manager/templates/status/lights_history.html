@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}History{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <table>
+    <tr>
+      <th>AT Time</th>
+      <th>Count</th>
+    </tr>
+    {% for history in lights_history_count %}
+      <tr>
+        <td>{{ history.at_time }}</td>
+        <td>{{ history.count }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

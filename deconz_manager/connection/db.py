@@ -1,7 +1,7 @@
 import logging
 
 import psycopg2
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, execute_values
 
 logger = logging.getLogger("deconz_manager.db")
 
@@ -79,7 +79,18 @@ def update_deconz_connection_data(ip=None, port=None, api_key=None):
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 f"UPDATE connection SET ip_address = coalesce(%s, ip_address), "
-                f"port = coalesce(%s, port), api_key = coalesce(%s, api_key)",
-                (ip, port, api_key),
+                f"port = coalesce(%s, port), api_key = coalesce(%s, api_key)"(
+                    ip, port, api_key
+                ),
             )
             # logger.info(f"Result: {result}")
+
+
+def extract_fields(data, field_path, default=None):
+    keys = field_path.split(".")
+    for key in keys:
+        try:
+            data = data[key]
+        except (KeyError, TypeError):
+            return default
+    return data

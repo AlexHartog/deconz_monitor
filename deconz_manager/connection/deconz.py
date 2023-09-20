@@ -2,12 +2,12 @@ import logging
 import requests
 import json
 
-from . import db
+from . import db, lights, groups
 
-logger = logging.getLogger("deconz_manager.db")
+logger = logging.getLogger("deconz_manager.deconz")
 
 
-def get_connection_url(type):
+def get_connection_url(type=None):
     connection_data = db.get_deconz_connection_data()
     logger.info(f"Connection data is {connection_data}")
 
@@ -69,6 +69,10 @@ def get_connection_url(type):
 
     if type == "lights":
         return f"{base_url}/lights"
+    elif type == "groups":
+        return f"{base_url}/groups"
+    elif type is None:
+        return base_url
 
 
 def get_lights():
@@ -77,10 +81,36 @@ def get_lights():
 
     if response.status_code != 200:
         logger.error(
-            f"Error requesting API key: {response.status_code} - {response.text}"
+            f"Error retrieving lights: {response.status_code} - {response.text}"
         )
         return
 
-    logger.info(f"Result is {response.json()}")
+    lights.save_lights(response.json())
 
-    return response.json()
+
+def get_groups():
+    url = get_connection_url(type="groups")
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        logger.error(
+            f"Error retrieving groups: {response.status_code} - {response.text}"
+        )
+        return
+
+    groups_data = response.json()
+
+    groups.save_groups(groups_data)
+    groups.save_group_lights(groups_data)
+
+
+def get_all_data():
+    get_lights()
+    get_groups()
+
+
+def update_all_data():
+    get_all_data()
+    logger.info(f"Updating all data")
+    lights.store_state()
+    # Now we need to save history
