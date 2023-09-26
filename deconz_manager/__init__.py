@@ -50,13 +50,13 @@ def create_app(test_config=None):
     from .connection import deconz
 
     # TODO: add scheduler back in
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
-    # scheduler.start()
-    # atexit.register(lambda: scheduler.shutdown())
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
+    scheduler.start()
+    atexit.register(lambda: scheduler.shutdown())
 
-    # for job in scheduler.get_jobs():
-    #     app.logger.info(f"Running {job.func} at {job.trigger}")
+    for job in scheduler.get_jobs():
+        app.logger.info(f"Running {job.func} at {job.trigger}")
 
     # Check if we have an API key and otherwise request it
 
