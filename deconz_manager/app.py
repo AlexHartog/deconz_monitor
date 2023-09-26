@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template
 import logging
 
-from deconz_manager.connection import deconz, lights as db_lights
+from flask import Blueprint, render_template
+
+from deconz_manager.connection import deconz
+from deconz_manager.connection import lights as db_lights
 
 logger = logging.getLogger("deconz_manager.app")
 

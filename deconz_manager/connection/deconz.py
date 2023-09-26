@@ -1,8 +1,9 @@
-import logging
-import requests
 import json
+import logging
 
-from . import db, lights, groups
+import requests
+
+from . import db, groups, lights
 
 logger = logging.getLogger("deconz_manager.deconz")
 

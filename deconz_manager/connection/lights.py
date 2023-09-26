@@ -1,5 +1,6 @@
-from psycopg2.extras import RealDictCursor, execute_values
 import logging
+
+from psycopg2.extras import RealDictCursor, execute_values
 
 from . import db
 
@@ -98,16 +99,34 @@ def get_snapshot(snapshot_id: str):
     return execute_select_query(snapshot_query)
 
 
-def get_history_count():
-    history_count_query = """
+def get_history_count(start_time=None, end_time=None):
+    time_filter = ""
+    if start_time:
+        time_filter += f" AND at_time >= '{start_time}'"
+    if end_time:
+        time_filter += f" AND at_time <= '{end_time}'"
+
+    history_count_query = f"""
                 SELECT snapshot_id, at_time, count(*), 
                 sum(case when state_on then 1 else 0 end ) as on_count
                 FROM light_history 
-                WHERE state_reachable
+                WHERE state_reachable {time_filter}
                 GROUP BY at_time, snapshot_id
                 ORDER BY at_time desc, snapshot_id 
             """
     return execute_select_query(history_count_query)
+
+
+def get_day_averages():
+    day_average_query = f"""
+          SELECT 
+            CAST(at_time AS DATE) as date,
+            SUM(CASE WHEN state_on THEN 1 ELSE 0 END) / COUNT(DISTINCT snapshot_id) AS avg_light_on
+          FROM 
+          light_history
+          GROUP BY CAST(at_time AS date)
+    """
+    return execute_select_query(day_average_query)
 
 
 def execute_select_query(query):

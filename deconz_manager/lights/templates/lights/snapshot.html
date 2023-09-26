@@ -17,7 +17,7 @@
 
         <table id="lights_history" class="table table-striped">
           <thead>
-            <tr><th>Light</th><th>On</th><th>Brightness</th></tr>
+            <thtr><th>Light</th><th>On</th><th>Brightness</th><th>Reachable</th></tr>
           </thead>
           <tbody>
             {% for light_data in snapshot_lights %}
@@ -25,6 +25,7 @@
                     <td>{{ light_data.light_name }}</td>
                     <td>{{ light_data.state_on }}</td>
                     <td>{{ light_data.state_brightness }}</td>
+                    <td>{{ light_data.state_reachable }}</td>
                 </tr>
             {% endfor %}
           </tbody>

@@ -1,8 +1,8 @@
+import logging
+
 from psycopg2.extras import RealDictCursor, execute_values
 
 from . import db
-
-import logging
 
 logger = logging.getLogger("deconz_manager.db.groups")
 

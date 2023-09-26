@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Light Graphs{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <h2>Graphs</h2>
+    {{ graphs.history.div | safe }}
+{% endblock %}
+
+{% block scripts %}
+    {{ graphs.history.script  | safe}}
+{% endblock %}
