@@ -81,7 +81,7 @@ def store_state():
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 """
-                SELECT COALESCE(max(snapshot), 0) AS max_snapshot
+                SELECT COALESCE(max(snapshot_id), 0) AS max_snapshot
                 FROM light_history
             """
             )
@@ -92,42 +92,10 @@ def store_state():
 
             cursor.execute(
                 f"""
-                INSERT INTO light_history (light_id, state_brightness, state_on, state_reachable, snapshot)
+                INSERT INTO light_history (light_id, state_brightness, state_on, state_reachable, snapshot_id)
                 SELECT unique_id, state_brightness, state_on, state_reachable, {snapshot} FROM light
             """
             )
-
-
-def add_snapshots():
-    history_count = get_history_count()
-
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            snapshot = 1
-            for history in history_count:
-                at_time = history["at_time"]
-                # at_time_end = datetime.strptime(at_time, "%Y-%m-%d %H:%M:%S.%f%z")
-                # logger.debug(f"At time: {at_time}")
-                at_time_start = at_time - timedelta(seconds=1)
-                at_time_end = at_time + timedelta(seconds=1)
-                # logger.debug(f"At time end: {at_time_end}")
-                # at_time_end = at_time[:index] + newstring + at_time[index + 1:]
-
-                query = f"""
-                    UPDATE light_history 
-                    SET snapshot = {snapshot} 
-                    WHERE at_time > '{at_time_start}' and at_time < '{at_time_end}'
-                """
-                # logger.debug(f"Query: {query}")
-                cursor.execute(query)
-
-                snapshot += 1
-                # break
-
-                # logger.debug(f"History at time - {history['at_time']}")
-                #
-                # if snapshot > 5:
-                #     break
 
 
 def get_snapshot(at_time: str):
