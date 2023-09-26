@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Lights{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <table id="lights" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>On</th>
+        <th>Group</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for light in lights %}
+        <tr>
+          <td>{{ light.light_name }}</td>
+          <td>{{ light.state_on }}</td>
+          <td>{{ light.group_name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#lights').DataTable( {
+        "iDisplayLength": 100
+      });
+    });
+  </script>
+{% endblock %}

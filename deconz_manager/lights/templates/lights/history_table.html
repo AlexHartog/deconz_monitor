@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}History{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <table id="lights_history" class="table table-striped">
+    <thead>
+      <tr>
+        <th>AT Time</th>
+        <th>Num On</th>
+        <th>Total Lights</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for history in lights_history_count %}
+        <tr id="row" class="clickable-row" data-href="/snapshot/{{ history.at_time }}">
+          <td>{{ history.at_time }}</td>
+          <td>{{ history.on_count }}</td>
+          <td>{{ history.count }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#lights_history').DataTable( {
+        "iDisplayLength": 100
+      });
+    });
+  </script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const rows = document.querySelectorAll(".clickable-row");
+
+      rows.forEach((row) => {
+          row.addEventListener("click", () => {
+              const link = row.getAttribute("data-href");
+              if (link) {
+                  window.location.href = link;
+              }
+          });
+      });
+  });
+  </script>
+
+{% endblock %}

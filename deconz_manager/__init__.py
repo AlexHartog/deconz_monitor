@@ -6,10 +6,14 @@ import atexit
 from flask import Flask
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from .lights import lights
+from .app import bp as app_bp
+
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
     app.config.from_mapping(
         SECRET_KEY="dev",
         DATABASE=os.path.join(app.instance_path, "deconz_manager.sqlite"),
@@ -45,19 +49,19 @@ def create_app(test_config=None):
 
     from .connection import deconz
 
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
-    scheduler.start()
-    atexit.register(lambda: scheduler.shutdown())
+    # TODO: add scheduler back in
+    # scheduler = BackgroundScheduler()
+    # scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
+    # scheduler.start()
+    # atexit.register(lambda: scheduler.shutdown())
 
-    for job in scheduler.get_jobs():
-        app.logger.info(f"Running {job.func} at {job.trigger}")
+    # for job in scheduler.get_jobs():
+    #     app.logger.info(f"Running {job.func} at {job.trigger}")
 
     # Check if we have an API key and otherwise request it
 
-    from . import status
-
-    app.register_blueprint(status.bp)
+    app.register_blueprint(lights.bp)
+    app.register_blueprint(app_bp)
     app.logger.info("Starting app")
 
     return app

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}History Details{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    {% if history_details %}
+      <table id="lights_history" class="table table-striped">
+        <tbody>
+            <tr><td>Time</td><td>{{ history_details.at_time }}</td></tr>
+            <tr><td>Light</td><td>{{ history_details.light_name }}</td></tr>
+            <tr><td>On</td><td>{{ history_details.state_on }}</td></tr>
+            <tr><td>Brightness</td><td>{{ history_details.state_brightness }}</td></tr>
+        </tbody>
+      </table>
+    {% else %}
+      <p>No history details found.</p>
+    {% endif %}
+{% endblock %}
+
