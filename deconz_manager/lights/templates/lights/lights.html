@@ -11,14 +11,16 @@
         <th>Name</th>
         <th>On</th>
         <th>Group</th>
+        <th>Reachable</th>
       </tr>
     </thead>
     <tbody>
       {% for light in lights %}
-        <tr>
+        <tr {% if not light.state_reachable %} class="unreachable" {% endif %}>
           <td>{{ light.light_name }}</td>
           <td>{{ light.state_on }}</td>
           <td>{{ light.group_name }}</td>
+          <td>{{ light.state_reachable }}</td>
         </tr>
       {% endfor %}
     </tbody>
@@ -29,8 +31,14 @@
   <script>
     $(document).ready(function () {
       $('#lights').DataTable( {
-        "iDisplayLength": 100
+        "iDisplayLength": 100,
+        "createdRow": function (row, data, dataIndex) {
+          if (row.className == 'unreachable') {
+            $('td', row).css('background-color', '#fc6156');
+          }
+        }
       });
     });
   </script>
+
 {% endblock %}
