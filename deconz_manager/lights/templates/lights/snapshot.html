@@ -1,21 +1,36 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}History Details{% endblock %}</h1>
+  <h1>{% block title %}Snapshot{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    {% if history_details %}
-      <table id="lights_history" class="table table-striped">
-        <tbody>
-            <tr><td>Time</td><td>{{ history_details.at_time }}</td></tr>
-            <tr><td>Light</td><td>{{ history_details.light_name }}</td></tr>
-            <tr><td>On</td><td>{{ history_details.state_on }}</td></tr>
-            <tr><td>Brightness</td><td>{{ history_details.state_brightness }}</td></tr>
-        </tbody>
-      </table>
+    {% if snapshot_data %}
+        <table class="table table-striped">
+            <tbody>
+                <tr><td>Time</td><td>{{ snapshot_data.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td></tr>
+                <tr><td>Num On</td><td>{{ snapshot_data.num_on }} / {{ snapshot_data.total_count }}</td></tr>
+            </tbody>
+        </table>
+
+        <p><a href="{{ url_for('lights.history_table') }}">Back to history</a></p>
+
+        <table id="lights_history" class="table table-striped">
+          <thead>
+            <tr><th>Light</th><th>On</th><th>Brightness</th></tr>
+          </thead>
+          <tbody>
+            {% for light_data in snapshot_lights %}
+                <tr>
+                    <td>{{ light_data.light_name }}</td>
+                    <td>{{ light_data.state_on }}</td>
+                    <td>{{ light_data.state_brightness }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
     {% else %}
-      <p>No history details found.</p>
+      <p>No snapshot data found.</p>
     {% endif %}
 {% endblock %}
 

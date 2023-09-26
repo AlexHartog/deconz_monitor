@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, abort
+from operator import itemgetter
 
 import logging
 
@@ -29,24 +30,31 @@ def history():
     )
 
 
-@bp.route("/snapshot/<at_time>")
-def snapshot(at_time):
-    snapshot_data = db_lights.get_snapshot(at_time)
+@bp.route("/snapshot/<snapshot_id>")
+def snapshot(snapshot_id):
+    snapshot_lights = sorted(
+        db_lights.get_snapshot(snapshot_id),
+        key=lambda snapshot: (-snapshot["state_on"], snapshot["light_name"]),
+    )
 
-    logger.debug(f"Snapshot data: {snapshot_data}")
+    snapshot_data = {
+        "num_on": len([light for light in snapshot_lights if light["state_on"]]),
+        "total_count": len(snapshot_lights),
+        "timestamp": snapshot_lights[0]["at_time"],
+    }
 
-    return render_template("lights/history_table.html", snapshot_data=snapshot_data)
+    logger.debug(f"Snapshot data: {snapshot_lights}")
 
-
-@bp.route("create_snapshot")
-def create_snapshot():
-    db_lights.add_snapshots()
-    return "OK"
+    return render_template(
+        "lights/snapshot.html",
+        snapshot_lights=snapshot_lights,
+        snapshot_data=snapshot_data,
+    )
 
 
 @bp.route("/history_detail/<id>")
 def history_detail(id):
-    history_details = db_lights.get_light_history_details(id)
+    history_details = db_lights.get_history_details(id)
 
     if len(history_details) == 1:
         details = history_details[0]

@@ -15,7 +15,7 @@
     </thead>
     <tbody>
       {% for history in lights_history_count %}
-        <tr id="row" class="clickable-row" data-href="/snapshot/{{ history.at_time }}">
+        <tr id="row" class="clickable-row" data-href="{{ url_for('lights.snapshot', snapshot_id=history.snapshot_id) }}">
           <td>{{ history.at_time }}</td>
           <td>{{ history.on_count }}</td>
           <td>{{ history.count }}</td>
@@ -29,7 +29,8 @@
   <script>
     $(document).ready(function () {
       $('#lights_history').DataTable( {
-        "iDisplayLength": 100
+        "iDisplayLength": 100,
+        order: [[ 0, "desc" ]]
       });
     });
   </script>

@@ -1,6 +1,5 @@
 from psycopg2.extras import RealDictCursor, execute_values
 import logging
-from datetime import datetime, timedelta
 
 from . import db
 
@@ -52,28 +51,20 @@ def save_lights(lights_data):
 
 
 def get_lights():
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                """
+    lights_query = """
                 SELECT * 
                 FROM group_light_v
             """
-            )
-            return cursor.fetchall()
+    return execute_select_query(lights_query)
 
 
-def get_light_history_details(id: int):
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                f"""
+def get_history_details(id: int):
+    history_details_query = f"""
                 SELECT * 
                 FROM light_history_v
                 WHERE id={id}
             """
-            )
-            return cursor.fetchall()
+    return execute_select_query(history_details_query)
 
 
 def store_state():
@@ -98,28 +89,29 @@ def store_state():
             )
 
 
-def get_snapshot(at_time: str):
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                f"""
-                SELECT * 
+def get_snapshot(snapshot_id: str):
+    snapshot_query = f"""
+                SELECT distinct on (light_name) * 
                 FROM light_history_v
-                WHERE at_time='{at_time}'
+                WHERE snapshot_id='{snapshot_id}' AND state_on IS NOT NULL AND light_name IS NOT NULL
             """
-            )
+    return execute_select_query(snapshot_query)
 
 
 def get_history_count():
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                """
-                SELECT at_time, count(*), 
+    history_count_query = """
+                SELECT snapshot_id, at_time, count(*), 
                 sum(case when state_on then 1 else 0 end ) as on_count
                 FROM light_history 
-                GROUP BY at_time 
-                ORDER BY at_time ASC
+                WHERE state_reachable
+                GROUP BY at_time, snapshot_id
+                ORDER BY at_time desc, snapshot_id 
             """
-            )
-            return cursor.fetchall()
+    return execute_select_query(history_count_query)
+
+
+def execute_select_query(query):
+    with db.get_db_connection() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute(query)
+            return [dict(row) for row in cursor.fetchall()]
