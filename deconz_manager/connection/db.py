@@ -1,23 +1,27 @@
 import logging
+import os
 
 import psycopg2
-from psycopg2.extras import RealDictCursor, execute_values
+from psycopg2.extras import RealDictCursor
+
+from dotenv import load_dotenv
 
 logger = logging.getLogger("deconz_manager.db")
+
+load_dotenv()
 
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host="192.168.1.102",
-        database="deconz_manager_dev",
-        user="deconz_manager",
-        password="deconzm",
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_DATABASE"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
     )
     return conn
 
 
 def execute_query(query):
-    logger.info("Executing query: " + query)
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(query)
@@ -43,47 +47,15 @@ def create_deconz_connection_data(ip=None, port=None, api_key=None):
                 (ip, port, api_key),
             )
 
-    # mycursor.execute(
-    #     """INSERT INTO products
-    #                     (city_id, product_id, quantity, price)
-    #                     VALUES (%s, %s, %s, %s)""",
-    #     (city_id, product_id, quantity, price),
-    # )
-    #
-    # result = execute_query(
-    #     f"INSERT INTO connection(ip_address, port, api_key) VALUES ({ip}, {port}, {api_key})"
-    #     f'on conflict on constraint "connection_pkey" '
-    #     f"do update set ip_address='{ip}', port='{port}', api_key='{api_key}'"
-    # )
-    # logger.info(f"Result: {result}")
-
 
 def update_deconz_connection_data(ip=None, port=None, api_key=None):
-    # update_values = {
-    #     "ip_address": ip,
-    #     "port": port,
-    #     "api_key": api_key,
-    # }
-    #
-    # columns_to_update = [
-    #     f"{column} = '{value}'"
-    #     for column, value in update_values.items()
-    #     if value is not None
-    # ]
-    #
-    # if len(columns_to_update) == 0:
-    #     logger.warning("No columns to update.")
-    #     return
-
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(
                 f"UPDATE connection SET ip_address = coalesce(%s, ip_address), "
-                f"port = coalesce(%s, port), api_key = coalesce(%s, api_key)"(
-                    ip, port, api_key
-                ),
+                f"port = coalesce(%s, port), api_key = coalesce(%s, api_key)",
+                (ip, port, api_key),
             )
-            # logger.info(f"Result: {result}")
 
 
 def extract_fields(data, field_path, default=None):

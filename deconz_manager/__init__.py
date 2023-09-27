@@ -1,13 +1,13 @@
+import atexit
 import logging
 import os
 import sys
-import atexit
 
-from flask import Flask
 from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask
 
-from .lights import lights
 from .app import bp as app_bp
+from .lights import lights
 
 
 def create_app(test_config=None):
@@ -50,14 +50,13 @@ def create_app(test_config=None):
     from .connection import deconz
 
     # TODO: add scheduler back in
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
-    scheduler.start()
-    atexit.register(lambda: scheduler.shutdown())
-
-    for job in scheduler.get_jobs():
-        app.logger.info(f"Running {job.func} at {job.trigger}")
-
+    # scheduler = BackgroundScheduler()
+    # scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
+    # scheduler.start()
+    # atexit.register(lambda: scheduler.shutdown())
+    #
+    # for job in scheduler.get_jobs():
+    #     app.logger.info(f"Running {job.func} at {job.trigger}")
     # Check if we have an API key and otherwise request it
 
     app.register_blueprint(lights.bp)

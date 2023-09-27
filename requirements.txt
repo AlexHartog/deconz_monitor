@@ -4,3 +4,6 @@ psycopg2-binary
 apscheduler
 flake8
 bokeh
+python-dotenv
+pytest
+pytest-postgresql

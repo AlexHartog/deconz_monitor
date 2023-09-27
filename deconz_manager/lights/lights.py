@@ -57,8 +57,6 @@ def snapshot(snapshot_id):
         "timestamp": snapshot_lights[0]["at_time"],
     }
 
-    logger.debug(f"Snapshot data: {snapshot_lights}")
-
     return render_template(
         "lights/snapshot.html",
         snapshot_lights=snapshot_lights,

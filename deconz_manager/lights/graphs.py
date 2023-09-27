@@ -1,9 +1,10 @@
-from bokeh.embed import components
-from bokeh.plotting import figure
-from bokeh.layouts import gridplot
-from bokeh.models import HoverTool
 import logging
 from datetime import datetime, timedelta
+
+from bokeh.embed import components
+from bokeh.layouts import gridplot
+from bokeh.models import HoverTool
+from bokeh.plotting import figure
 
 from deconz_manager.connection import lights as db_lights
 
@@ -42,9 +43,6 @@ def create_day_averages():
     day_averages = db_lights.get_day_averages()
     x = [datetime.combine(row["date"], datetime.min.time()) for row in day_averages]
     y = [row["avg_light_on"] for row in day_averages]
-
-    logger.info(f"X: {x}")
-    logger.info(f"Y: {y}")
 
     p = figure(
         title="Average number of lights on",
