@@ -9,6 +9,9 @@ from flask import Flask
 from .app import bp as app_bp
 from .lights import lights
 
+from dotenv import load_dotenv
+
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -40,7 +43,9 @@ def create_app(test_config=None):
 
         app.config.from_mapping(test_config)
 
-    app.logger.warning("This is the real logger")
+    if missing := missing_required_env_variables():
+        app.logger.error(f"Closing down. Missing required environment variables: {', '.join(missing)}")
+        exit()
 
     try:
         os.makedirs(app.instance_path)
@@ -64,3 +69,19 @@ def create_app(test_config=None):
     app.logger.info("Starting app")
 
     return app
+
+
+def missing_required_env_variables() -> bool:
+    load_dotenv()
+    
+    required_variables = ["DB_USER", "DB_HOST", "DB_PASSWORD", "DB_DATABASE"]
+
+    return [variable for variable in required_variables if not os.getenv(variable)]
+
+    # # TODO: Keep this list somewhere
+    # for variable in required_variables:
+    #     if not os.getenv("DB_USER"):
+    #         missing.append(variable)
+    
+    # return missing
+        

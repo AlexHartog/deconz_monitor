@@ -4,6 +4,7 @@ from flask import Blueprint, abort, render_template
 
 from deconz_manager.connection import deconz
 from deconz_manager.connection import lights as db_lights
+from deconz_manager.extensions import pdb
 
 from . import graphs as light_graphs
 
@@ -15,17 +16,19 @@ bp = Blueprint("lights", __name__, url_prefix="/lights", template_folder="templa
 
 @bp.route("/")
 def lights():
-    deconz.get_all_data()
-    lights = db_lights.get_lights()
+    # deconz.get_all_data()
+    lights = db_lights.get_lights(pdb)
 
-    url = deconz.get_connection_url()
+    url = deconz.get_connection_url(pdb)
+
+    # logger.info(f"Lights: {lights}")
 
     return render_template("lights/lights.html", lights=lights, url=url)
 
 
 @bp.route("/history")
 def history():
-    lights_history_count = db_lights.get_history_count()
+    lights_history_count = db_lights.get_history_count(pdb)
 
     return render_template(
         "lights/history_table.html", lights_history_count=lights_history_count
@@ -35,7 +38,7 @@ def history():
 @bp.route("/snapshot/<snapshot_id>")
 def snapshot(snapshot_id):
     snapshot_lights = sorted(
-        db_lights.get_snapshot(snapshot_id),
+        db_lights.get_snapshot(pdb, snapshot_id),
         key=lambda snapshot: (
             -snapshot["state_reachable"],
             -snapshot["state_on"],
@@ -66,7 +69,7 @@ def snapshot(snapshot_id):
 
 @bp.route("/history_detail/<id>")
 def history_detail(id):
-    history_details = db_lights.get_history_details(id)
+    history_details = db_lights.get_history_details(pdb, id)
 
     if len(history_details) == 1:
         details = history_details[0]
@@ -78,7 +81,7 @@ def history_detail(id):
 
 @bp.route("/history_table")
 def history_table():
-    lights_history_count = db_lights.get_history_count()
+    lights_history_count = db_lights.get_history_count(pdb)
 
     return render_template(
         "lights/history_table.html", lights_history_count=lights_history_count

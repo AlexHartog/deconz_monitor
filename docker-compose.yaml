@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+    postgres:
+        build:
+            context: ./testing #build the image for the web service from the dockerfile in parent directory
+            dockerfile: Dockerfile
+        restart: always
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+        logging:
+          options:
+            max-size: 10m
+            max-file: "3"
+        ports:
+          - '5438:5432'

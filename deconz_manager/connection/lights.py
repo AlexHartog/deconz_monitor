@@ -51,55 +51,54 @@ def save_lights(lights_data):
             )
 
 
-def get_lights():
+def get_lights(conn):
     lights_query = """
                 SELECT * 
                 FROM group_light_v
             """
-    return execute_select_query(lights_query)
+    return execute_select_query(conn, lights_query)
 
 
-def get_history_details(id: int):
+def get_history_details(conn, id: int):
     history_details_query = f"""
                 SELECT * 
                 FROM light_history_v
                 WHERE id={id}
             """
-    return execute_select_query(history_details_query)
+    return execute_select_query(conn, history_details_query)
 
 
-def store_state():
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(
-                """
-                SELECT COALESCE(max(snapshot_id), 0) AS max_snapshot
-                FROM light_history
+def store_state(conn):
+    with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+        cursor.execute(
             """
-            )
+            SELECT COALESCE(max(snapshot_id), 0) AS max_snapshot
+            FROM light_history
+        """
+        )
 
-            max_snapshot = cursor.fetchone()["max_snapshot"]
+        max_snapshot = cursor.fetchone()["max_snapshot"]
 
-            snapshot = max_snapshot + 1
+        snapshot = max_snapshot + 1
 
-            cursor.execute(
-                f"""
-                INSERT INTO light_history (light_id, state_brightness, state_on, state_reachable, snapshot_id)
-                SELECT unique_id, state_brightness, state_on, state_reachable, {snapshot} FROM light
-            """
-            )
+        cursor.execute(
+            f"""
+            INSERT INTO light_history (light_id, state_brightness, state_on, state_reachable, snapshot_id)
+            SELECT unique_id, state_brightness, state_on, state_reachable, {snapshot} FROM light
+        """
+        )
 
 
-def get_snapshot(snapshot_id: str):
+def get_snapshot(conn, snapshot_id: str):
     snapshot_query = f"""
                 SELECT distinct on (light_name) * 
                 FROM light_history_v
                 WHERE snapshot_id='{snapshot_id}' AND state_on IS NOT NULL AND light_name IS NOT NULL
             """
-    return execute_select_query(snapshot_query)
+    return execute_select_query(conn, snapshot_query)
 
 
-def get_history_count(start_time=None, end_time=None):
+def get_history_count(conn, start_time=None, end_time=None):
     time_filter = ""
     if start_time:
         time_filter += f" AND at_time >= '{start_time}'"
@@ -114,10 +113,10 @@ def get_history_count(start_time=None, end_time=None):
                 GROUP BY at_time, snapshot_id
                 ORDER BY at_time desc, snapshot_id 
             """
-    return execute_select_query(history_count_query)
+    return execute_select_query(conn, history_count_query)
 
 
-def get_day_averages():
+def get_day_averages(conn):
     day_average_query = f"""
           SELECT 
             CAST(at_time AS DATE) as date,
@@ -126,11 +125,10 @@ def get_day_averages():
           light_history
           GROUP BY CAST(at_time AS date)
     """
-    return execute_select_query(day_average_query)
+    return execute_select_query(conn, day_average_query)
 
 
-def execute_select_query(query):
-    with db.get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute(query)
-            return [dict(row) for row in cursor.fetchall()]
+def execute_select_query(conn, query):
+    with conn.cursor() as cursor:
+        cursor.execute(query)
+        return [dict(row) for row in cursor.fetchall()]

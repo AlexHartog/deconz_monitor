@@ -8,8 +8,10 @@ from . import db, groups, lights
 logger = logging.getLogger("deconz_manager.deconz")
 
 
-def get_connection_url(type=None):
-    connection_data = db.get_deconz_connection_data()
+def get_connection_url(conn, type=None):
+    # TODO: Split up this long function
+    print("Start with db_conn ", conn)
+    connection_data = db.get_deconz_connection_data(conn=conn)
     logger.info(f"Connection data is {connection_data}")
 
     if not connection_data:
@@ -76,8 +78,8 @@ def get_connection_url(type=None):
         return base_url
 
 
-def get_lights():
-    url = get_connection_url(type="lights")
+def get_lights(conn):
+    url = get_connection_url(conn, type="lights")
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -89,8 +91,8 @@ def get_lights():
     lights.save_lights(response.json())
 
 
-def get_groups():
-    url = get_connection_url(type="groups")
+def get_groups(conn):
+    url = get_connection_url(conn, type="groups")
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -105,13 +107,13 @@ def get_groups():
     groups.save_group_lights(groups_data)
 
 
-def get_all_data():
-    get_lights()
-    get_groups()
+def get_all_data(conn):
+    get_lights(conn)
+    get_groups(conn)
 
 
-def update_all_data():
-    get_all_data()
+def update_all_data(conn):
+    get_all_data(conn)
     logger.info(f"Updating all data")
-    lights.store_state()
+    lights.store_state(conn)
     # Now we need to save history

@@ -7,6 +7,7 @@ from bokeh.models import HoverTool
 from bokeh.plotting import figure
 
 from deconz_manager.connection import lights as db_lights
+from deconz_manager.extensions import pdb
 
 logger = logging.getLogger("deconz_manager.lights.graphs")
 
@@ -24,7 +25,7 @@ def create_history_graphs():
 
 
 def create_light_history_graph():
-    history_count = db_lights.get_history_count()
+    history_count = db_lights.get_history_count(pdb)
     x = [row["at_time"] for row in history_count]
     y = [row["on_count"] for row in history_count]
 
@@ -40,7 +41,7 @@ def create_light_history_graph():
 
 
 def create_day_averages():
-    day_averages = db_lights.get_day_averages()
+    day_averages = db_lights.get_day_averages(conn=pdb)
     x = [datetime.combine(row["date"], datetime.min.time()) for row in day_averages]
     y = [row["avg_light_on"] for row in day_averages]
 
