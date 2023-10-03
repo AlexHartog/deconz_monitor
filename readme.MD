@@ -12,6 +12,12 @@ This project will create overviews of the states of deconz devices.
 temp password:
 deconzm
 
+### Running in development
+
+You can use the following command 
+
+`flask --app deconz_manager run --host 0.0.0.0 --debug`
+
 ## Testing
 
 ### Postgres Testing Instance

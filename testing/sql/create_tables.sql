@@ -6,8 +6,8 @@ CREATE TABLE public.deconz_group (
 	CONSTRAINT deconz_group_pkey PRIMARY KEY (id)
 );
 
-/* Create connection table */
-CREATE TABLE public."connection" (
+/* Create deconz connection table */
+CREATE TABLE public.deconz_connection (
 	onerow_id bool NOT NULL DEFAULT true,
 	api_key varchar(50) NULL,
 	ip_address varchar(50) NULL,

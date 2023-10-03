@@ -1,6 +1,6 @@
 import logging
 
-from psycopg2.extras import RealDictCursor, execute_values
+from psycopg2.extras import execute_values
 
 from . import db
 
@@ -43,16 +43,15 @@ def save_group_lights(conn, groups_data):
         group_lights.extend(group_combinations)
 
     with conn.cursor() as cursor:
-        # logger.info(f"Group lights: {group_lights}")
         execute_values(
             cursor,
-            f"INSERT INTO group_light (group_id, light_id) VALUES %s"
-            f'ON CONFLICT ON CONSTRAINT "group_light_pkey" DO NOTHING',
+            """INSERT INTO group_light (group_id, light_id) VALUES %s
+            ON CONFLICT ON CONSTRAINT "group_light_pkey" DO NOTHING""",
             group_lights,
         )
 
 
 def get_groups(conn):
     with conn.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM groups")
+        cursor.execute("SELECT * FROM groups")
         return cursor.fetchall()

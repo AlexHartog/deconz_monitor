@@ -4,13 +4,15 @@ import os
 import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import load_dotenv
 from flask import Flask
 
 from .app import bp as app_bp
+from .connection import deconz
+from .connection.connection_manager import postgres_db
 from .lights import lights
 
-from dotenv import load_dotenv
-
+load_dotenv()
 
 
 def create_app(test_config=None):
@@ -25,7 +27,7 @@ def create_app(test_config=None):
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(
         logging.Formatter(
-            fmt="[%(asctime)s.%(msecs)d][%(module)s][%(levelname)s] %(message)s",
+            fmt="[%(asctime)s.%(msecs)d][%(module)s][%(levelname)s]" " %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         ),
     )
@@ -44,7 +46,10 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     if missing := missing_required_env_variables():
-        app.logger.error(f"Closing down. Missing required environment variables: {', '.join(missing)}")
+        app.logger.error(
+            f"Closing down. Missing required environment variables: "
+            f"{', '.join(missing)}"
+        )
         exit()
 
     try:
@@ -52,16 +57,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from .connection import deconz
+    # TODO: add scheduler back in, make it part of env
+    if os.getenv("ENABLE_SCHEDULER") == "True":
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(
+            deconz.update_all_data, args=[postgres_db], trigger="interval", minutes=1
+        )
+        scheduler.start()
+        atexit.register(lambda: scheduler.shutdown())
 
-    # TODO: add scheduler back in
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(deconz.update_all_data, trigger="interval", minutes=1)
-    # scheduler.start()
-    # atexit.register(lambda: scheduler.shutdown())
-    #
-    # for job in scheduler.get_jobs():
-    #     app.logger.info(f"Running {job.func} at {job.trigger}")
+        for job in scheduler.get_jobs():
+            app.logger.info(
+                f"Running {job.func} with args: {job.args} at {job.trigger}"
+            )
+
     # Check if we have an API key and otherwise request it
 
     app.register_blueprint(lights.bp)
@@ -72,8 +81,6 @@ def create_app(test_config=None):
 
 
 def missing_required_env_variables() -> bool:
-    load_dotenv()
-    
     required_variables = ["DB_USER", "DB_HOST", "DB_PASSWORD", "DB_DATABASE"]
 
     return [variable for variable in required_variables if not os.getenv(variable)]
@@ -82,6 +89,5 @@ def missing_required_env_variables() -> bool:
     # for variable in required_variables:
     #     if not os.getenv("DB_USER"):
     #         missing.append(variable)
-    
+
     # return missing
-        

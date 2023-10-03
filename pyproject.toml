@@ -1,2 +1,5 @@
 [tool.pytest.ini_options]
 norecursedirs = ["api"]
+
+[tool.black]
+line-length=88

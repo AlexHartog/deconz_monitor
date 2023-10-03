@@ -57,7 +57,10 @@ def get_connection_url(conn, type=None):
 
         if api_result.status_code != 200:
             logger.error(
-                f"Error requesting API key: {api_result.status_code} - {api_result.text}"
+                f"""
+                Error requesting API key:
+                {api_result.status_code} - {api_result.text}
+                """
             )
             return
 
@@ -68,7 +71,11 @@ def get_connection_url(conn, type=None):
 
         connection_data = db.get_deconz_connection_data()
 
-    base_url = f"http://{connection_data['ip_address']}:{connection_data['port']}/api/{connection_data['api_key']}"
+    base_url = (
+        f"http://{connection_data['ip_address']}:"
+        f"{connection_data['port']}/api/"
+        f"{connection_data['api_key']}"
+    )
 
     if type == "lights":
         return f"{base_url}/lights"
@@ -88,7 +95,7 @@ def get_lights(conn):
         )
         return
 
-    lights.save_lights(response.json())
+    lights.save_lights(conn, response.json())
 
 
 def get_groups(conn):
@@ -103,8 +110,9 @@ def get_groups(conn):
 
     groups_data = response.json()
 
-    groups.save_groups(groups_data)
-    groups.save_group_lights(groups_data)
+    # TODO: remove conn later and make sure tests pick this up
+    groups.save_groups(conn, groups_data)
+    groups.save_group_lights(conn, groups_data)
 
 
 def get_all_data(conn):
@@ -114,6 +122,5 @@ def get_all_data(conn):
 
 def update_all_data(conn):
     get_all_data(conn)
-    logger.info(f"Updating all data")
+    logger.info("Updating all data")
     lights.store_state(conn)
-    # Now we need to save history

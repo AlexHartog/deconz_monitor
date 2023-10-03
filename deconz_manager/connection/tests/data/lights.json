@@ -1,0 +1,62 @@
+{
+  "1": {
+    "etag": "35f4a238fd36ddd540612c8fa437f06e",
+    "hascolor": false,
+    "lastannounced": null,
+    "lastseen": "2023-10-03T08:36Z",
+    "manufacturername": "dresden elektronik",
+    "modelid": "ConBee II",
+    "name": "Configuration tool 1",
+    "state": {
+      "reachable": true
+    },
+    "swversion": "0x26720700",
+    "type": "Configuration tool",
+    "uniqueid": "00:21:2e:ff:ff:07:0c:7d-01"
+  },
+  "2": {
+    "capabilities": {
+      "alerts": [
+        "none",
+        "select",
+        "lselect"
+      ],
+      "color": {
+        "ct": {
+          "max": 454,
+          "min": 153
+        },
+        "modes": [
+          "ct"
+        ]
+      }
+    },
+    "colorcapabilities": 16,
+    "config": {
+      "groups": [
+        "0",
+        "1"
+      ]
+    },
+    "ctmax": 454,
+    "ctmin": 153,
+    "etag": "e63955f0aae7fa44c635b17aa1479abd",
+    "hascolor": true,
+    "lastannounced": "2023-09-21T15:44:48Z",
+    "lastseen": "2023-10-03T09:19Z",
+    "manufacturername": "Philips",
+    "modelid": "LTW013",
+    "name": "man_cave_rail_1",
+    "state": {
+      "alert": "none",
+      "bri": 144,
+      "colormode": "ct",
+      "ct": 443,
+      "on": true,
+      "reachable": true
+    },
+    "swversion": "1.88.1",
+    "type": "Color temperature light",
+    "uniqueid": "00:17:88:01:04:dd:bc:c2-0b"
+  }
+}
