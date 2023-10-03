@@ -57,7 +57,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # TODO: add scheduler back in, make it part of env
     if os.getenv("ENABLE_SCHEDULER") == "True":
         scheduler = BackgroundScheduler()
         scheduler.add_job(
