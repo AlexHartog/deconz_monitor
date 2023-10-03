@@ -55,7 +55,7 @@ def get_lights(conn):
                 SELECT *
                 FROM group_light_v
             """
-    return execute_select_query(conn, lights_query)
+    return db.execute_select_query(conn, lights_query)
 
 
 def get_history_details(conn, id: int):
@@ -64,10 +64,10 @@ def get_history_details(conn, id: int):
                 FROM light_history_v
                 WHERE id={id}
             """
-    return execute_select_query(conn, history_details_query)
+    return db.execute_select_query(conn, history_details_query)
 
 
-def store_state(conn):
+def make_snapshot(conn):
     with conn.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute(
             """
@@ -97,7 +97,7 @@ def get_snapshot(conn, snapshot_id: str):
                 WHERE snapshot_id='{snapshot_id}' AND state_on IS NOT NULL
                 AND light_name IS NOT NULL
             """
-    return execute_select_query(conn, snapshot_query)
+    return db.execute_select_query(conn, snapshot_query)
 
 
 def get_history_count(conn, start_time=None, end_time=None, limit=None):
@@ -116,7 +116,7 @@ def get_history_count(conn, start_time=None, end_time=None, limit=None):
                 ORDER BY at_time desc, snapshot_id
                 { 'limit ' + str(limit) if limit else ''}
             """
-    return execute_select_query(conn, history_count_query)
+    return db.execute_select_query(conn, history_count_query)
 
 
 def get_day_averages(conn):
@@ -129,10 +129,4 @@ def get_day_averages(conn):
           light_history
           GROUP BY CAST(at_time AS date)
     """
-    return execute_select_query(conn, day_average_query)
-
-
-def execute_select_query(conn, query):
-    with conn.cursor() as cursor:
-        cursor.execute(query)
-        return [dict(row) for row in cursor.fetchall()]
+    return db.execute_select_query(conn, day_average_query)

@@ -110,7 +110,6 @@ def get_groups(conn):
 
     groups_data = response.json()
 
-    # TODO: remove conn later and make sure tests pick this up
     groups.save_groups(conn, groups_data)
     groups.save_group_lights(conn, groups_data)
 
@@ -123,4 +122,4 @@ def get_all_data(conn):
 def update_all_data(conn):
     get_all_data(conn)
     logger.info("Updating all data")
-    lights.store_state(conn)
+    lights.make_snapshot(conn)

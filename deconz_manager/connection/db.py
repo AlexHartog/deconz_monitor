@@ -16,6 +16,12 @@ def execute_query(conn, query):
             return None
 
 
+def execute_select_query(conn, query):
+    with conn.cursor() as cursor:
+        cursor.execute(query)
+        return [dict(row) for row in cursor.fetchall()]
+
+
 def extract_fields(data, field_path, default=None):
     keys = field_path.split(".")
     for key in keys:
