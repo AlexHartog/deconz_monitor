@@ -92,6 +92,7 @@ AS SELECT light_history.id,
     group_light_v.product_name,
     group_light_v.manufacturer_name,
     group_light_v.unique_id,
-    light_history.snapshot_id
+    light_history.snapshot_id,
+    1 as testing
    FROM light_history
      LEFT JOIN group_light_v ON light_history.light_id = group_light_v.unique_id;	

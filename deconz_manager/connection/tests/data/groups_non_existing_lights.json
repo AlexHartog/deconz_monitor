@@ -1,0 +1,17 @@
+{
+  "1": {
+    "etag": "1965588dcd35fa4984970582c87179c4",
+    "id": "1",
+    "lights": [
+      "1",
+      "2",
+      "10123"
+    ],
+    "name": "Man Cave",
+    "state": {
+      "all_on": true,
+      "any_on": true
+    },
+    "type": "Room"
+  }
+}

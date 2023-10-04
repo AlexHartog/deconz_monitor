@@ -1,0 +1,29 @@
+{
+  "1": {
+    "etag": "1965588dcd35fa4984970582c87179c4",
+    "id": "1",
+    "lights": [
+      "1",
+      "2"
+    ],
+    "name": "Man Cave",
+    "state": {
+      "all_on": true,
+      "any_on": true
+    },
+    "type": "Room"
+  },
+  "2": {
+    "etag": "aa333c5e44ec7f50d46bc775ede50737",
+    "id": "2",
+    "lights": [
+      "2"
+    ],
+    "name": "Guest Bathroom",
+    "state": {
+      "all_on": false,
+      "any_on": false
+    },
+    "type": "Room"
+  }
+}

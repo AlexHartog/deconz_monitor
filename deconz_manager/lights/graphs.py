@@ -13,6 +13,7 @@ logger = logging.getLogger("deconz_manager.lights.graphs")
 
 
 def create_history_graphs():
+    """Create a grid of historical graphs to display."""
     graphs = {}
     grid = gridplot(
         [create_light_history_graph(), create_day_averages()],
@@ -25,6 +26,7 @@ def create_history_graphs():
 
 
 def create_light_history_graph():
+    """Create a plot of the number of lights on over time."""
     history_count = db_lights.get_history_count(postgres_db)
     x = [row["at_time"] for row in history_count]
     y = [row["on_count"] for row in history_count]
@@ -41,6 +43,7 @@ def create_light_history_graph():
 
 
 def create_day_averages():
+    """Create a plot of the average number of lights on per day."""
     day_averages = db_lights.get_day_averages(conn=postgres_db)
     x = [datetime.combine(row["date"], datetime.min.time()) for row in day_averages]
     y = [row["avg_light_on"] for row in day_averages]

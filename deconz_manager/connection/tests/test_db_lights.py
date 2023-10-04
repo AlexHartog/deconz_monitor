@@ -1,14 +1,12 @@
-import logging
-import json
-import os
-from pathlib import Path
 import datetime
-
+import json
+import logging
+import os
 import pytest
+
 from psycopg2.extras import execute_values
 
 import deconz_manager.connection.lights as db_lights
-
 
 logger = logging.getLogger("deconz_manager.tests.db_lights")
 
@@ -38,14 +36,6 @@ EXPECTED_LIGHTS_DATA = [
         ),
     },
 ]
-
-
-@pytest.fixture()
-def lights_data():
-    """Load lights data from json file."""
-    json_location = Path(__file__).parent / "data"
-
-    return read_json_file(json_location, "lights.json")
 
 
 def assert_lights_data(
@@ -116,6 +106,23 @@ def test_get_lights_correct_data(conn, lights_data):
     )
 
 
+@pytest.mark.parametrize("json_data", ["lights_different.json"], indirect=True)
+def test_save_lights_overwrites_correct_data(conn, lights_data, json_data):
+    """Test if save lights removes lights that aren't part of the data."""
+    db_lights.save_lights(conn, lights_data)
+
+    db_lights.save_lights(conn, json_data)
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT * FROM light ORDER BY id")
+        lights = cursor.fetchall()
+
+    assert len(lights) == len(json_data)
+    print("JSON Data: ", json_data)
+    assert lights[0]["light_name"] == json_data[lights[0]["id"]]["name"]
+    assert lights[1]["light_name"] == json_data[lights[1]["id"]]["name"]
+
+
 def test_make_snapshot_correct_data(conn, lights_data):
     """Test if make_snapshot creates correct data."""
     db_lights.save_lights(conn, lights_data)
@@ -152,6 +159,10 @@ def test_make_snapshot_id_updated(conn, lights_data):
             "SELECT distinct snapshot_id FROM light_history ORDER BY snapshot_id"
         )
         snapshot_ids = cursor.fetchall()
+
+    import time
+
+    # time.sleep(20)
 
     assert len(snapshot_ids) == 2
     assert snapshot_ids[0]["snapshot_id"] == 1

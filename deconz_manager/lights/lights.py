@@ -21,12 +21,11 @@ bp = Blueprint(
 
 @bp.route("/")
 def lights():
-    # deconz.get_all_data()
+    """Show the current state for all lights."""
+    deconz.get_all_data(postgres_db)
     lights = db_lights.get_lights(postgres_db)
 
     url = deconz.get_connection_url(postgres_db)
-
-    # logger.info(f"Lights: {lights}")
 
     return render_template(
         "lights/lights.html",
@@ -35,18 +34,9 @@ def lights():
     )
 
 
-@bp.route("/history")
-def history():
-    lights_history_count = db_lights.get_history_count(postgres_db)
-
-    return render_template(
-        "lights/history_table.html",
-        lights_history_count=lights_history_count,
-    )
-
-
 @bp.route("/snapshot/<snapshot_id>")
 def snapshot(snapshot_id):
+    """Show details for a specific snapshot."""
     snapshot_lights = sorted(
         db_lights.get_snapshot(postgres_db, snapshot_id),
         key=lambda snapshot: (
@@ -79,6 +69,7 @@ def snapshot(snapshot_id):
 
 @bp.route("/history_detail/<id>")
 def history_detail(id):
+    """Show details for a specific history record."""
     history_details = db_lights.get_history_details(postgres_db, id)
 
     if len(history_details) == 1:
@@ -94,6 +85,7 @@ def history_detail(id):
 
 @bp.route("/history_table")
 def history_table():
+    """Get a table of all history. By default show the last 1000 entries."""
     lights_history_count = db_lights.get_history_count(postgres_db, limit=1000)
 
     return render_template(
@@ -104,6 +96,7 @@ def history_table():
 
 @bp.route("/graphs")
 def graphs():
+    """Create graphs to display."""
     graphs = light_graphs.create_history_graphs()
 
     return render_template(

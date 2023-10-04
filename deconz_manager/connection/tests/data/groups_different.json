@@ -1,0 +1,29 @@
+{
+  "1": {
+    "etag": "1965588dcd35fa4984970582c87179c4",
+    "id": "1",
+    "lights": [
+      "1",
+      "2"
+    ],
+    "name": "A new name",
+    "state": {
+      "all_on": true,
+      "any_on": true
+    },
+    "type": "Room"
+  },
+  "3": {
+    "etag": "aa333c5e44ec7f50d46bc775ede50737",
+    "id": "2",
+    "lights": [
+      "1"
+    ],
+    "name": "A new room",
+    "state": {
+      "all_on": false,
+      "any_on": false
+    },
+    "type": "Room"
+  }
+}
