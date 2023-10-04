@@ -21,7 +21,8 @@ def create_deconz_connection_data(conn, ip=None, port=None, api_key=None):
         cursor.execute(
             """
                 DELETE FROM deconz_connection;
-                INSERT INTO deconz_connection(ip_address, port, api_key) VALUES (%s, %s, %s)
+                INSERT INTO deconz_connection(ip_address, port, api_key) \
+                VALUES (%s, %s, %s)
             """,
             (ip, port, api_key),
         )

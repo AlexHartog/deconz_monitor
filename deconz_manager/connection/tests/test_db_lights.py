@@ -2,8 +2,8 @@ import datetime
 import json
 import logging
 import os
-import pytest
 
+import pytest
 from psycopg2.extras import execute_values
 
 import deconz_manager.connection.lights as db_lights
@@ -160,10 +160,6 @@ def test_make_snapshot_id_updated(conn, lights_data):
         )
         snapshot_ids = cursor.fetchall()
 
-    import time
-
-    # time.sleep(20)
-
     assert len(snapshot_ids) == 2
     assert snapshot_ids[0]["snapshot_id"] == 1
     assert snapshot_ids[1]["snapshot_id"] == 2
@@ -253,11 +249,11 @@ def test_get_day_averages_correct_data(conn, lights_data):
     with conn.cursor() as cursor:
         execute_values(
             cursor,
-            f"INSERT INTO light_history " f"(at_time, state_on, snapshot_id) VALUES %s",
+            "INSERT INTO light_history (at_time, state_on, snapshot_id) VALUES %s",
             data_to_insert,
         )
 
-        cursor.execute(f"SELECT * FROM light_history")
+        cursor.execute("SELECT * FROM light_history")
 
     day_averages = db_lights.get_day_averages(conn)
 

@@ -8,7 +8,8 @@ logger = logging.getLogger("deconz_manager.db_lights")
 
 
 def save_lights(conn, lights_data):
-    """Save all lights data. Delete lights that are not part of data and update existing ones."""
+    """Save all lights data. Delete lights that are not part of data
+    and update existing ones."""
     light_fields = {
         "unique_id": "uniqueid",
         "etag": "etag",

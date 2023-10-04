@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from . import db, groups, lights, deconz_connection
+from . import deconz_connection, groups, lights
 
 logger = logging.getLogger("deconz_manager.deconz")
 

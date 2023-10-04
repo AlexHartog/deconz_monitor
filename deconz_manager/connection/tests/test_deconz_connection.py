@@ -1,10 +1,8 @@
 import logging
-import os
 
 import psycopg2.errors
 import psycopg2.extras
 import pytest
-from psycopg2 import OperationalError
 
 from deconz_manager.connection import db, deconz_connection
 
@@ -63,8 +61,8 @@ def test_get_connection_data_multiple(conn):
         with pytest.raises(psycopg2.errors.UniqueViolation):
             cursor.execute(
                 """
-                INSERT INTO 
-                deconz_connection (api_key, port, ip_address) 
+                INSERT INTO
+                deconz_connection (api_key, port, ip_address)
                 VALUES ('test2', '1001', 'test2')
                 """
             )

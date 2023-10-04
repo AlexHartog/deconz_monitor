@@ -47,7 +47,8 @@ def save_groups(conn, groups_data):
 
 
 def create_group_light_combinations(conn, groups_data):
-    """Create a list of group_light tuples and exclude non existing group_light combinations."""
+    """Create a list of group_light tuples and exclude non existing
+    group_light combinations."""
     with conn.cursor() as cursor:
         cursor.execute("SELECT * FROM light")
         existing_light_ids = [light["id"] for light in cursor.fetchall()]
