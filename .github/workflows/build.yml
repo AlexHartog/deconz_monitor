@@ -1,4 +1,4 @@
-name: Run Tests
+name: Build
 
 on: [push, pull_request]
 
@@ -39,6 +39,8 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Set up DB Schema
+      env:
+        PGPASSWORD: postgres
       run: psql -h localhost -U postgres -d testdb -a -f testing/sql/create_tables.sql
     - name: Test with pytest
       run: |
