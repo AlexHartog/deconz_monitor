@@ -43,9 +43,9 @@ def save_lights(conn, lights_data):
     columns = "id, " + ", ".join(light_fields.keys())
 
     with conn.cursor() as cursor:
-        cursor.execute(
-            "DELETE FROM light WHERE unique_id NOT IN %s", (tuple(lights_ids),)
-        )
+        # cursor.execute(
+        #     "DELETE FROM light WHERE unique_id NOT IN %s", (tuple(lights_ids),)
+        # )
 
         execute_values(
             cursor,
