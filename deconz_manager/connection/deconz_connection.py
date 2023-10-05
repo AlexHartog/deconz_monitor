@@ -6,6 +6,7 @@ logger = logging.getLogger("deconz_manager.db.deconz_connection")
 
 
 def get_deconz_connection_data(conn):
+    """Get deconz connection data. Verify that there is exactly one connection data."""
     connection_data = db.execute_query(conn, "SELECT * FROM deconz_connection")
     if len(connection_data) == 0:
         logger.info("No connection data found.")
@@ -17,6 +18,7 @@ def get_deconz_connection_data(conn):
 
 
 def create_deconz_connection_data(conn, ip=None, port=None, api_key=None):
+    """Create new deconz connection data and remove any existing ones before."""
     with conn.cursor() as cursor:
         cursor.execute(
             """
@@ -29,6 +31,7 @@ def create_deconz_connection_data(conn, ip=None, port=None, api_key=None):
 
 
 def update_deconz_connection_data(conn, ip=None, port=None, api_key=None):
+    """Update deconz connection data if available. Raise NoResultFound if not."""
     with conn.cursor() as cursor:
         cursor.execute("SELECT * FROM deconz_connection")
         if len(cursor.fetchall()) == 0:

@@ -1,4 +1,4 @@
-## Deconz Manager
+# Deconz Manager
 
 This project will create overviews of the states of deconz devices.
 
@@ -12,6 +12,20 @@ Not implemented yet
 
 ### Switches
 Not implemented yet
+
+## Running application
+
+### Database
+
+Create a postgres database and create the necessary tables and views found in 
+testing/sql/create_tables.sql.
+
+Also make sure to give the user the necessary permissions in the schema.
+
+```
+GRANT SELECT, INSERT, DELETE, UPDATE ON all tables in SCHEMA public TO deconz_manager;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO deconz_manager;
+```
 
 ### Running in development
 You can use the following command 

@@ -5,18 +5,18 @@ from dotenv import load_dotenv
 from psycopg2.extras import RealDictCursor
 from psycopg2.pool import SimpleConnectionPool
 
+load_dotenv()
+
 
 class PostgresDB:
+    """This class handles the connection to the postgres database."""
+
     def __init__(self):
         self.app = None
         self.pool = None
 
-    def init_app(self, app):
-        self.app = app
-        self.connect()
-
     def connect(self):
-        load_dotenv()
+        """Create a connection pool using the environment variables."""
         self.pool = SimpleConnectionPool(
             1,
             20,
@@ -29,6 +29,7 @@ class PostgresDB:
 
     @contextmanager
     def cursor(self, cursor_factory=None):
+        """Create a cursor using the connection pool."""
         if self.pool is None:
             self.connect()
         con = self.pool.getconn()

@@ -118,7 +118,6 @@ def test_save_lights_overwrites_correct_data(conn, lights_data, json_data):
         lights = cursor.fetchall()
 
     assert len(lights) == len(json_data)
-    print("JSON Data: ", json_data)
     assert lights[0]["light_name"] == json_data[lights[0]["id"]]["name"]
     assert lights[1]["light_name"] == json_data[lights[1]["id"]]["name"]
 

@@ -7,3 +7,4 @@ bokeh
 python-dotenv
 pytest
 pytest-postgresql
+gunicorn

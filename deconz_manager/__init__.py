@@ -16,7 +16,7 @@ load_dotenv()
 
 
 def create_app(test_config=None):
-    # create and configure the app
+    """Create the Flask app."""
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
@@ -70,8 +70,6 @@ def create_app(test_config=None):
                 f"Running {job.func} with args: {job.args} at {job.trigger}"
             )
 
-    # Check if we have an API key and otherwise request it
-
     app.register_blueprint(lights.bp)
     app.register_blueprint(app_bp)
     app.logger.info("Starting app")
@@ -79,14 +77,7 @@ def create_app(test_config=None):
     return app
 
 
-def missing_required_env_variables() -> bool:
+def missing_required_env_variables() -> [str]:
     required_variables = ["DB_USER", "DB_HOST", "DB_PASSWORD", "DB_DATABASE"]
 
     return [variable for variable in required_variables if not os.getenv(variable)]
-
-    # # TODO: Keep this list somewhere
-    # for variable in required_variables:
-    #     if not os.getenv("DB_USER"):
-    #         missing.append(variable)
-
-    # return missing
